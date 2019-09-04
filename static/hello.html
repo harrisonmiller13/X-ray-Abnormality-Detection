@@ -19,7 +19,7 @@
             let message = {
                 name: $("#name-input").val()
             }
-            $.post("http://localhost:5000/static/hello", JSON.stringify(message), function(response){
+            $.post("http://10.9.110.156:5000/hello", JSON.stringify(message), function(response){
                 $("#greeting").text(response.greeting);
                 console.log(response);
             });
