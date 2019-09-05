@@ -1,3 +1,14 @@
+import matplotlib as plt
+import numpy as np
+
+import torch
+import torchvision
+import torchvision.transforms as transforms
+
+import torch.nn as nn
+import torch.nn.functional as F
+import torch.optim as optim
+
 from PIL import Image
 from flask import request
 from flask import jsonify
@@ -7,7 +18,9 @@ app = Flask(__name__)
 
 def get_model():
     global model
-    model = load_model('PUT SAVED MODEL HERE')
+    device = torch.device('cpu')
+    model = TheModelClass(*args,**kwargs)
+    model.load_state_dict(torch.load(PATH TO MODEL, map_location=device))
     print('* Model Loaded ヘ(◕。◕ヘ) ')
 
 def preprocess_image(image, target_size):
@@ -19,7 +32,8 @@ def preprocess_image(image, target_size):
 
     return image
 
-print('* Loading PyTorch model...')
+print("* Loading PyTorch model...")
+
 get_model()
 
 @app.route("/predict",methods=["POST"])
@@ -30,7 +44,7 @@ def predict():
     image = Image.open(io.BytesIO(decoded))
     processed_image = preprocess_image(image,target_size = (224,224))
 
-    prediction = model.predict(processed_image).tolist()
+    prediction = model.eval(processed_image).tolist()
 
     response = {
         'prediction': {
