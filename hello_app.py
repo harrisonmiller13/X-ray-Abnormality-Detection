@@ -4,7 +4,7 @@ from flask import Flask
 
 app = Flask(__name__)
 
-@app.route('/static/hello',methods=['POST'])
+@app.route('/hello',methods=['POST','GET'])
 def hello():
     message = request.get_json(force = True)
     name = message['name']
