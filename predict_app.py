@@ -20,7 +20,8 @@ def get_model():
     global model
     device = torch.device('cpu')
     model = TheModelClass(*args,**kwargs)
-    model.load_state_dict(torch.load(PATH TO MODEL, map_location=device))
+    model.load_state_dict(torch.load(PATHTOMODEL, map_location=device))
+    
     print('* Model Loaded ヘ(◕。◕ヘ) ')
 
 def preprocess_image(image, target_size):
