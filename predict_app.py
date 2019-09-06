@@ -49,10 +49,10 @@ get_model()
 
 @app.route("/predict",methods=["GET","POST"])
 def predict():
-    message = request.get_json(force=True)
+    message = request.get_json(force=False)
     encoded = message['image']
-    # decoded = base64.b64decode(encoded)
-    # image = Image.open(io.BytesIO(decoded))
+    decoded = base64.b64decode(encoded)
+    image = Image.open(io.BytesIO(decoded))
     processed_image = preprocess_image(image)
 
     prediction = model.eval(processed_image).tolist()
