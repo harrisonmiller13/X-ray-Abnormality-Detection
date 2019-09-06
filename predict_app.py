@@ -1,9 +1,11 @@
 import matplotlib as plt
 import numpy as np
+import io
 
 import torch
 import torchvision
 import torchvision.transforms as transforms
+from torchvision import models
 
 import torch.nn as nn
 import torch.nn.functional as F
@@ -19,22 +21,30 @@ app = Flask(__name__)
 def get_model():
     global model
     device = torch.device('cpu')
-    model = TheModelClass(*args,**kwargs)
-    model.load_state_dict(torch.load(PATHTOMODEL, map_location=device))
+    model = models.densenet121(pretrained=True)
+    # model.load_state_dict(torch.load(PATHTOMODEL, map_location=device))
+    model.eval()
     
     print('* Model Loaded ヘ(◕。◕ヘ) ')
 
-def preprocess_image(image, target_size):
-    if image.mode != 'RGB':
-        image = image.convert('RGB')
-    image = image.resize(target_size)
-    image = img_to_array(image)
-    image = np.expand_dims(image,axis =0)
-
-    return image
+def preprocess_image(image_bytes):
+    my_transforms = transforms.Compose([transforms.Resize(255),
+                                        transforms.CenterCrop(224),
+                                        transforms.ToTensor(),
+                                        transforms.Normalize(
+                                            [0.485,0.456,0.406],
+                                            [0.229,0.224,0.225]
+                                        )])
+    image = Image.open(io.BytesIO(image_bytes))
+    return my_transforms(image).unsqueeze(0)
 
 print("* Loading PyTorch model...")
 
+def get_prediction(image_bytes):
+    tensor = preprocess_image(image_bytes=image_bytes)
+    outputs = model.forward(tensor)
+    _, y_hat = outputs.max(1)
+    return y_hat
 get_model()
 
 @app.route("/predict",methods=["POST"])
