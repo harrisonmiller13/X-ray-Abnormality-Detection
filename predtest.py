@@ -41,6 +41,14 @@ def preprocess_image(image_bytes):
     image = Image.open(io.BytesIO(image_bytes))
     return my_transforms(image).unsqueeze(0)
 
+model = get_model()
+
+def get_inference(image_bytes):
+    tensor = preprocess_image(image_bytes)
+    outputs = model.forward(tensor)
+    print(outputs)
+
+
 app = Flask(__name__)
 
 @app.route('/predict', methods=['GET','POST'])
@@ -53,8 +61,7 @@ def hello_world():
             return
         file = request.files['file']
         image = file.read()
-        tensor = preprocess_image(image_bytes=image)
-        print(tensor.shape)
+        get_inference(image_bytes=image)
         return render_template('predict3.html', result='stuff')
 
 if __name__=='__main__':
