@@ -1,6 +1,7 @@
 import matplotlib as plt
 import numpy as np
 import io
+import json
 
 import torch
 import torchvision
@@ -14,18 +15,21 @@ import torch.optim as optim
 from PIL import Image
 from flask import request
 from flask import jsonify
-from flask import Flask
+from flask import Flask, render_template
 
-app = Flask(__name__)
+
 
 def get_model():
-    global model
-    # device = torch.device('cpu')
-    model = models.densenet121(pretrained=True)
-    model.classifier = nn.Linear(1024,2)
+    path = torch.load('model_retrieval.tar', 
+                        map_location=torch.device('cpu'))
+    model = models.densenet201(pretrained=True)
+    model.classifier = nn.Linear(1920,2)
+    model.load_state_dict(path['state_dict'],strict=False)
     model.eval()
-    
     print('* Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
+    return model
+    
+    
 
 def preprocess_image(image_bytes):
     my_transforms = transforms.Compose([transforms.Resize(255),
@@ -35,32 +39,40 @@ def preprocess_image(image_bytes):
                                             [0.485,0.456,0.406],
                                             [0.229,0.224,0.225]
                                         )])
-    image = Image.open(io.BytesIO(image_bytes))
+    image = Image.open(io.BytesIO(image_bytes)).convert('RGB')
     return my_transforms(image).unsqueeze(0)
 
+with open('class_to_idx.json') as f:
+    class_to_result = json.load(f)
 
-def get_prediction(image_bytes):
-    tensor = preprocess_image(image_bytes=image_bytes)
+idx_to_class = {v: k for k,v in class_to_result.items()}
+
+model = get_model()
+
+def get_inference(image_bytes):
+    tensor = preprocess_image(image_bytes)
     outputs = model.forward(tensor)
-    _, y_hat = outputs.max(1)
-    return y_hat
+    _, prediction = outputs.max(1)
+    category = prediction.item()
+    class_idx = idx_to_class[category]
+    return category,class_idx
 
-get_model()
 
-@app.route("/predict",methods=["GET","POST"])
-def predict():
-    message = request.get_json(force=False)
-    encoded = message['image']
-    decoded = base64.b64decode(encoded)
-    image = Image.open(io.BytesIO(decoded))
-    processed_image = preprocess_image(image)
 
-    prediction = model.eval(processed_image).tolist()
+app = Flask(__name__)
 
-    response = {
-        'prediction': {
-            'normal': prediction[0][0],
-            'abnormal': prediction[0][1]
-        }
-    }
-    return jsonify(response)
+@app.route('/predict', methods=['GET','POST'])
+def hello_world():
+    if request.method == 'GET':
+        return render_template('index.html', value='hello')
+    if request.method == 'POST':
+        if 'file' not in request.files:
+            print("file not uploaded")
+            return
+        file = request.files['file']
+        image = file.read()
+        category, class_idx = get_inference(image_bytes=image)
+        return render_template('result.html', xrayresult= class_idx, result=category)
+
+if __name__=='__main__':
+    app.run(debug=True)
