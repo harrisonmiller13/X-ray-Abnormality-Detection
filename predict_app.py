@@ -22,7 +22,7 @@ def get_model():
     global model
     # device = torch.device('cpu')
     model = models.densenet121(pretrained=True)
-    # model.load_state_dict(torch.load(PATHTOMODEL, map_location=device))
+    model.classifier = nn.Linear(1024,2)
     model.eval()
     
     print('* Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
