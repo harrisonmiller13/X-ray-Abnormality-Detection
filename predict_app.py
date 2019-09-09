@@ -17,13 +17,14 @@ from flask import request
 from flask import jsonify
 from flask import Flask, render_template
 
+from CAM import *
 
 
 def get_model():
     path = torch.load('best_BCE.dense.tar', 
                         map_location=torch.device('cpu'))
     model = models.densenet201(pretrained=True)
-    model.classifier = nn.Linear(1920,2)
+    model.classifier = nn.Linear(1920,1)
     model.load_state_dict(path['state_dict'],strict=False)
     model.eval()
     print(' 🔥Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
@@ -57,7 +58,8 @@ def get_inference(image_bytes):
     class_idx = idx_to_class[category]
     return category,class_idx
 
-
+def gen_heatmap(image_bytes):
+    return GetHeatMap(image_bytes,'/static',model)
 
 app = Flask(__name__)
 
@@ -72,7 +74,8 @@ def hello_world():
         file = request.files['file']
         image = file.read()
         category, class_idx = get_inference(image_bytes=image)
-        return render_template('result.html', xrayresult= class_idx, result=category)
+        heatmap = gen_heatmap(image_bytes=image)
+        return render_template('result.html', xrayresult= class_idx, result=category,hm=heatmap)
 
 if __name__=='__main__':
     app.run(debug=True)

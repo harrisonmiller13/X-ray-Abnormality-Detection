@@ -21,12 +21,12 @@ class HeatmapGenerator ():
        
         model = models.densenet201(pretrained = True)
 
-        classes = 2 # here we can modify the classes of data
+        classes = 1 # here we can modify the classes of data
         model.classifier = nn.Linear(1920, classes)
         checkpoint = torch.load('best_BCE.dense.tar',
                                 map_location=torch.device('cpu'))               
        
-        model.load_state_dict(checkpoint['state_dict'])
+        model.load_state_dict(checkpoint['state_dict'],strict=False)
        
         self.model = model.module.features
         self.model.eval()
