@@ -20,13 +20,13 @@ from flask import Flask, render_template
 
 
 def get_model():
-    path = torch.load('model_retrieval.tar', 
+    path = torch.load('best_BCE.dense.tar', 
                         map_location=torch.device('cpu'))
     model = models.densenet201(pretrained=True)
     model.classifier = nn.Linear(1920,2)
     model.load_state_dict(path['state_dict'],strict=False)
     model.eval()
-    print('* Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
+    print(' 🔥Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
     return model
     
     
