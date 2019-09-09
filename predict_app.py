@@ -58,9 +58,11 @@ def get_inference(image_bytes):
     class_idx = idx_to_class[category]
     return category,class_idx
 
-def gen_heatmap(image_bytes):
-    return GetHeatMap(image_bytes,'/static',model)
 
+def gen_heatmap(image_bytes):
+    cam_image = Image.open(image_bytes)
+    return GetHeatMap(cam_image,'/static',"model_retrieval.tar")
+    
 app = Flask(__name__)
 
 @app.route('/predict', methods=['GET','POST'])
@@ -74,8 +76,8 @@ def hello_world():
         file = request.files['file']
         image = file.read()
         category, class_idx = get_inference(image_bytes=image)
-        heatmap = gen_heatmap(image_bytes=image)
-        return render_template('result.html', xrayresult= class_idx, result=category,hm=heatmap)
+        heatmap = gen_heatmap(image_bytes=cam_image)
+        return render_template('result.html', xrayresult= class_idx, result=category,hm="pathOutputFile.png")
 
 if __name__=='__main__':
     app.run(debug=True)
