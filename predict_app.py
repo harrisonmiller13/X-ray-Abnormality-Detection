@@ -12,6 +12,8 @@ import torch.nn as nn
 import torch.nn.functional as F
 import torch.optim as optim
 
+from IPython.display import Image as pim
+from IPython.display import display
 from PIL import Image
 from flask import request
 from flask import jsonify
@@ -24,7 +26,7 @@ def get_model():
     path = torch.load('best_BCE.dense.tar', 
                         map_location=torch.device('cpu'))
     model = models.densenet201(pretrained=True)
-    model.classifier = nn.Linear(1920,1)
+    model.classifier = nn.Linear(1920,2)
     model.load_state_dict(path['state_dict'],strict=False)
     model.eval()
     print(' 🔥Loaded PyTorch model 🔥ヘ(◕。◕ヘ) ')
@@ -59,9 +61,9 @@ def get_inference(image_bytes):
     return category,class_idx
 
 
-def gen_heatmap(image_bytes):
-    cam_image = Image.open(image_bytes)
-    return GetHeatMap(cam_image,'/static',"model_retrieval.tar")
+# def gen_heatmap(file):
+#     # cam_image = Image.open()
+#     return GetHeatMap(file,'/static',"model_retrieval.tar")
     
 app = Flask(__name__)
 
@@ -75,9 +77,15 @@ def hello_world():
             return
         file = request.files['file']
         image = file.read()
+        #TODO: this causes image to pop out in local viewer
+        viz = Image.open(file) 
+        raw_im = viz.show()
         category, class_idx = get_inference(image_bytes=image)
-        heatmap = gen_heatmap(image_bytes=cam_image)
-        return render_template('result.html', xrayresult= class_idx, result=category,hm="pathOutputFile.png")
+        #TODO: pass the image properly to CAM to get heatmap image
+        # heatmap = gen_heatmap(file)
+        # hm=Image.open(heatmap)
+        # hmshow = hm.show()
+        return render_template('result.html', xrayresult= class_idx, result=category, img=raw_im)
 
 if __name__=='__main__':
     app.run(debug=True)
