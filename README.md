@@ -17,21 +17,8 @@ Using the 10 layer network the model achieved an accuracy of 71.4% and a kappa s
 Using the transfer learning model accuracy increased to 82.2% and a kappa statistic of 0.642.
 
 
-
-
-### And coding style tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
-
-## Deployment
-
-Add additional notes about how to deploy this on a live system
-
-## Built With
+## Next steps
+A Flask site was built.  The user is able to upload an upper limb x-ray and the site will run inference and return whether the image is normal or abnormal.  The gradient cam currently runs in a separate notebook and will be later integrated into the flask app.  Next step after that is to use heroku to have the app running remotely.
 
 * [PyTorch](http://pytorch.org)
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
