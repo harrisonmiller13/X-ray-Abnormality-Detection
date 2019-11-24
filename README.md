@@ -5,43 +5,18 @@ This project was built to classify an upper limb x-ray as normal or abnormal.  T
 
 The image data comes from the MURA 1.1 dataset from Stanford University School of Medicine. MURA is a dataset of musculoskeletal radiographs consisting of 14,863 studies from 12,173 patients, with a total of 40,561 multi-view radiographic images. Each belongs to one of seven standard upper extremity radiographic study types: elbow, finger, forearm, hand, humerus, shoulder, and wrist. Each study was manually labeled as normal or abnormal by board-certified radiologists from the Stanford Hospital at the time of clinical radiographic interpretation in the diagnostic radiology environment between 2001 and 2012.
 
-### Prerequisites
 
-What things you need to install the software and how to install them
+## CNN
 
-```
-Give examples
-```
+The initial CNN that I created was a 10 layer network with dropout and regularization.  The Adam optimizer was used.  The x-rays were sent through the network in batches of 8 with an initial learning rate of 0.0001. ReLU was used as the activation function.  Binary Cross Entropy was the loss function.  For the final layer, a sigmoid activation was used for the classification.
 
-### Installing
+A second CNN was created using transfer learning. Using the DENSENET201 pretrained network, all layers were frozen except for the last 10 in order to specify for the dataset.
 
-A step by step series of examples that tell you how to get a development env running
+## Results
+With the 10 layer
 
-Say what the step will be
 
-```
-Give the example
-```
 
-And repeat
-
-```
-until finished
-```
-
-End with an example of getting some data out of the system or using it for a little demo
-
-## Running the tests
-
-Explain how to run the automated tests for this system
-
-### Break down into end to end tests
-
-Explain what these tests test and why
-
-```
-Give an example
-```
 
 ### And coding style tests
 
@@ -59,12 +34,12 @@ Add additional notes about how to deploy this on a live system
 
 * [PyTorch](http://pytorch.org)
 * [Flask](https://flask.palletsprojects.com/en/1.1.x/)
-* [Heroku](https://www.heroku.com)
+<!-- * [Heroku](https://www.heroku.com) -->
 
 
 ## Authors
 
-* **Harrison Miller** - *Initial work* - [GitHub](https://github.com/PurpleBooth)
+* **Harrison Miller** - *Initial work* - [GitHub](https://github.com/harrisonmiller13)
 
 
 ## License
