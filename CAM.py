@@ -55,7 +55,7 @@ class HeatmapGenerator ():
        
         output = self.model(input)
         # Generate heatmap
-        heatmap = np.zeros((13, 7, 1), dtype=np.float64)
+        heatmap = np.zeros((7, 7, 1), dtype=np.float64)
         weight = self.weights.data.cpu().numpy()
         len = weight.shape[0]
         output = output.data.cpu().numpy()

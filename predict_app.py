@@ -61,9 +61,9 @@ def get_inference(image_bytes):
     return category,class_idx
 
 
-# def gen_heatmap(file):
-#     # cam_image = Image.open()
-#     return GetHeatMap(file,'/static',"model_retrieval.tar")
+def gen_heatmap(file):
+    # cam_image = Image.open()
+    return GetHeatMap(file,'/static',"model_retrieval.tar")
     
 app = Flask(__name__)
 
@@ -77,7 +77,7 @@ def hello_world():
             return
         file = request.files['file']
         image = file.read()
-        #TODO: this causes image to pop out in local viewer
+        #TODO: this causes image to pop out in local viewer, may actually be better for larger view of input xray 🤔
         viz = Image.open(file) 
         raw_im = viz.show()
         category, class_idx = get_inference(image_bytes=image)
