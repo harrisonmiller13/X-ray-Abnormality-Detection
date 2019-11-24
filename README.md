@@ -13,7 +13,8 @@ The initial CNN that I created was a 10 layer network with dropout and regulariz
 A second CNN was created using transfer learning. Using the DENSENET201 pretrained network, all layers were frozen except for the last 10 in order to specify for the dataset.
 
 ## Results
-With the 10 layer
+Using the 10 layer network the model achieved an accuracy of 71.4% and a kappa statistic of 0.423 which was an improvement over the baseline accuracy of 61.5%.  
+Using the transfer learning model accuracy increased to 82.2% and a kappa statistic of 0.642.
 
 
 
